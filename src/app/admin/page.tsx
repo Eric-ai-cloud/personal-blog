@@ -154,7 +154,7 @@ export default function AdminPage() {
             {/* 搜索结果提示 */}
             {searchQuery && (
               <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                搜索 "{searchQuery}" — 找到 {filteredPosts.length} 篇
+                搜索 &quot;{searchQuery}&quot; — 找到 {filteredPosts.length} 篇
                 {filteredPosts.length !== posts.length && `（共 ${posts.length} 篇）`}
               </p>
             )}
@@ -162,7 +162,7 @@ export default function AdminPage() {
             {filteredPosts.length === 0 ? (
               <div className="text-center py-12 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
                 <p className="text-gray-500 dark:text-gray-400">
-                  未找到匹配 "{searchQuery}" 的文章
+                  未找到匹配 &quot;{searchQuery}&quot; 的文章
                 </p>
                 <button
                   onClick={() => setSearchQuery('')}

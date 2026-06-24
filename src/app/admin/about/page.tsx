@@ -85,7 +85,7 @@ export default function EditAboutPage() {
         <div className="space-y-6">
           {/* 提示 */}
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-200">
-            💡 这里是博客首页"关于我"链接对应的页面内容，支持富文本编辑。
+            💡 这里是博客首页「关于我」链接对应的页面内容，支持富文本编辑。
           </div>
 
           {/* Editor */}
