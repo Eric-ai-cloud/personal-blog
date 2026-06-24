@@ -120,6 +120,15 @@ export default function AdminPage() {
             >
               + 新建文章
             </Link>
+            <button
+              onClick={async () => {
+                await fetch('/api/auth/logout', { method: 'POST' })
+                window.location.href = '/admin/login'
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            >
+              退出
+            </button>
           </div>
         </div>
       </header>
