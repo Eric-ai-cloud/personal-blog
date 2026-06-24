@@ -9,8 +9,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: '我的个人博客',
-    template: '%s | 我的个人博客',
+    default: 'Eric的博客',
+    template: '%s | Eric的博客',
   },
   description: '分享技术、生活和个人思考的个人博客',
   keywords: ['blog', 'technology', 'personal', '技术博客'],
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
-    siteName: '我的个人博客',
-    title: '我的个人博客',
+    siteName: 'Eric的博客',
+    title: 'Eric的博客',
     description: '分享技术、生活和个人思考的个人博客',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '我的个人博客',
+    title: 'Eric的博客',
     description: '分享技术、生活和个人思考的个人博客',
   },
   robots: {
@@ -48,7 +48,7 @@ export default function RootLayout({
         <link
           rel="alternate"
           type="application/rss+xml"
-          title="我的个人博客 RSS Feed"
+          title="Eric的博客 RSS Feed"
           href="/feed.xml"
         />
       </head>

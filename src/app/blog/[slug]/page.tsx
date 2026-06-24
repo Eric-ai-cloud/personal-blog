@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       modifiedTime: publishedTime,
       tags: post.data.tags,
       url: `${siteUrl}/blog/${encodeURIComponent(params.slug)}`,
-      siteName: '我的个人博客',
+      siteName: 'Eric的博客',
       locale: 'zh_CN',
     },
     twitter: {

@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   title: '博客文章',
   description: '查看所有技术文章和分享',
   openGraph: {
-    title: '博客文章 | 我的个人博客',
+    title: '博客文章 | Eric的博客',
     description: '查看所有技术文章和分享',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '博客文章 | 我的个人博客',
+    title: '博客文章 | Eric的博客',
     description: '查看所有技术文章和分享',
   },
 }

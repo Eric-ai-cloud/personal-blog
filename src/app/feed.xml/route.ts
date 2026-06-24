@@ -54,7 +54,7 @@ export async function GET() {
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
   xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>我的个人博客</title>
+    <title>Eric的博客</title>
     <link>${siteUrl}</link>
     <description>分享技术、生活和个人思考的个人博客</description>
     <language>zh-CN</language>

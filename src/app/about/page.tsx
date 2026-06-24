@@ -21,12 +21,12 @@ export const metadata: Metadata = {
   title: '关于我',
   description: '了解博主的故事和背景',
   openGraph: {
-    title: '关于我 | 我的个人博客',
+    title: '关于我 | Eric的博客',
     description: '了解博主的故事和背景',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '关于我 | 我的个人博客',
+    title: '关于我 | Eric的博客',
     description: '了解博主的故事和背景',
   },
 }
