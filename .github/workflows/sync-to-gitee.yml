@@ -1,0 +1,21 @@
+name: Sync to Gitee
+on:
+  push: # 只要有代码推送到GitHub，就触发同步
+    branches:
+      - '*' # 匹配所有分支，包括你的预览分支
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync GitHub to Gitee
+        uses: wearerequired/git-mirror-action@v1
+        with:
+          source_repo: https://github.com/${{ github.repository }}.git
+          destination_repo: https://${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_NAME }}/${{ secrets.GITEE_REPO }}.git
+      - name: Trigger Gitee Pages Deploy
+        uses: yanglbme/gitee-pages-action@main
+        with:
+          gitee-token: ${{ secrets.GITEE_TOKEN }}
+          gitee-username: ${{ secrets.GITEE_NAME }}
+          gitee-repository: ${{ secrets.GITEE_REPO }}
+          branch: ${{ github.ref_name }} # 自动同步当前推送的分支作为预览分支
