@@ -7,7 +7,6 @@ import RichEditor from '@/components/admin/RichEditor'
 import FrontmatterForm, { type FrontmatterFormRef } from '@/components/admin/FrontmatterForm'
 
 export const dynamic = 'force-dynamic'
-export const runtime = 'edge' // 可选，使用边缘 runtime 更适配静态部署
 这个配置告诉Next.js，这个页面不需要在构建时预渲染，完全由客户端在运行时处理，可以绕过generateStaticParams的要求，你的编辑后台功能完全不受影响。
 export default function EditPostPage() {
   const router = useRouter()
