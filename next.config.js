@@ -2,6 +2,7 @@
 // 4EVERLAND部署时设置 NEXT_STATIC_EXPORT=true
 // Vercel部署时不设置，保持SSR模式
 const isStaticExport = process.env.NEXT_STATIC_EXPORT === 'true'
+const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL || 'https://personal-blog.vercel.app'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -11,11 +12,20 @@ const nextConfig = {
   // 静态导出配置（仅4EVERLAND启用）
   ...(isStaticExport ? { output: 'export' } : {}),
 
-  // 构建时注入环境变量到客户端代码
-  // 确保4EVERLAND构建时 NEXT_PUBLIC_* 变量能正确内联
-  env: {
-    NEXT_PUBLIC_STATIC_EXPORT: isStaticExport ? 'true' : 'false',
-    NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL || 'https://personal-blog.vercel.app',
+  // 通过 webpack DefinePlugin 强制内联变量
+  // 确保变量在客户端代码中一定被替换为正确的值
+  webpack: (config) => {
+    const { DefinePlugin } = require('webpack')
+    config.plugins.push(
+      new DefinePlugin({
+        // 强制替换所有组件中的静态模式检测
+        'process.env.NEXT_PUBLIC_STATIC_EXPORT': JSON.stringify(
+          isStaticExport ? 'true' : 'false'
+        ),
+        'process.env.NEXT_PUBLIC_VERCEL_URL': JSON.stringify(vercelUrl),
+      })
+    )
+    return config
   },
 
   // MDX 配置
