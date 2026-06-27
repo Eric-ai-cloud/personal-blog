@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 开启静态导出，替代原来的next export
+  output: 'export',
 
+  // Next.js 配置选项
   reactStrictMode: true,
   
   // MDX 配置
