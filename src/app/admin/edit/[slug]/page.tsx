@@ -6,10 +6,6 @@ import Link from 'next/link'
 import RichEditor from '@/components/admin/RichEditor'
 import FrontmatterForm, { type FrontmatterFormRef } from '@/components/admin/FrontmatterForm'
 
-export const dynamic = 'force-dynamic'
-export async function generateStaticParams() {
-  return []
-}
 export default function EditPostPage() {
   const router = useRouter()
   const params = useParams()
