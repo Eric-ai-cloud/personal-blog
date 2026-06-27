@@ -11,7 +11,7 @@ jobs:
         uses: wearerequired/git-mirror-action@v1
         with:
           source-repo: https://github.com/${{ github.repository }}.git
-          destination-repo: https://${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_NAME }}/${{ secrets.GITEE_REPO }}.git
+          destination-repo: https://Eric-ai-cloud:882a899e23589ab90bdac53c6dff2578@gitee.com/Eric-ai-cloud/personal-blog.git
       - name: Trigger Gitee Pages Deploy
         uses: yanglbme/gitee-pages-action@main
         with:
