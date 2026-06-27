@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { isStaticMode } from '@/lib/static-mode'
+import StaticFallback from '@/components/admin/StaticFallback'
 
 interface Comment {
   id: string
@@ -33,6 +35,7 @@ export default function AdminCommentsPage() {
 
   // 加载评论和评论者
   useEffect(() => {
+    if (isStaticMode()) return
     fetchComments()
     fetchCommenters()
   }, [filterSlug, filterCommenterId])
@@ -129,6 +132,10 @@ export default function AdminCommentsPage() {
 
   // 提取唯一文章 slug 列表
   const uniqueSlugs = [...new Set(comments.map((c) => c.articleSlug))]
+
+  if (isStaticMode()) {
+    return <StaticFallback adminPath="/admin/comments" />
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

@@ -14,10 +14,14 @@ export default function ViewCount({ slug }: ViewCountProps) {
   const [viewCount, setViewCount] = useState<number | null>(null)
 
   useEffect(() => {
+    // 静态模式下不显示浏览计数
+    if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') {
+      setViewCount(0)
+      return
+    }
     fetch(`/api/posts/views?slug=${encodeURIComponent(slug)}`)
       .then((res) => res.json())
       .then((data) => {
-        // 获取后立即上报一次浏览，所以显示计数至少 +1
         setViewCount(data.viewCount || 0)
       })
       .catch(() => {

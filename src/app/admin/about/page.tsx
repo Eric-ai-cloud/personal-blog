@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import RichEditor from '@/components/admin/RichEditor'
+import { isStaticMode } from '@/lib/static-mode'
+import StaticFallback from '@/components/admin/StaticFallback'
 
 export default function EditAboutPage() {
   const [saving, setSaving] = useState(false)
@@ -11,6 +13,7 @@ export default function EditAboutPage() {
 
   // 加载现有内容
   useEffect(() => {
+    if (isStaticMode()) return
     fetchAbout()
   }, [])
 
@@ -50,6 +53,10 @@ export default function EditAboutPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (isStaticMode()) {
+    return <StaticFallback adminPath="/admin/about" />
   }
 
   if (loading) {

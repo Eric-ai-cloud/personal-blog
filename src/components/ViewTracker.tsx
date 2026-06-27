@@ -15,6 +15,8 @@ export default function ViewTracker({ slug }: ViewTrackerProps) {
   const trackedRef = useRef(false)
 
   useEffect(() => {
+    // 静态模式下不追踪浏览
+    if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') return
     // 防止 Strict Mode 下重复计数
     if (trackedRef.current) return
     trackedRef.current = true

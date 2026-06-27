@@ -6,6 +6,95 @@ interface PostVoteProps {
   slug: string
 }
 
+// ========== localStorage 投票组件（静态模式使用）==========
+function PostVoteStatic({ slug }: PostVoteProps) {
+  const storageKey = `post_vote_${slug}`
+
+  interface VoteData {
+    likeCount: number
+    dislikeCount: number
+    userVote: 'like' | 'dislike' | null
+  }
+
+  const [voteData, setVoteData] = useState<VoteData>({ likeCount: 0, dislikeCount: 0, userVote: null })
+
+  useEffect(() => {
+    const stored = localStorage.getItem(storageKey)
+    if (stored) {
+      try {
+        setVoteData(JSON.parse(stored))
+      } catch { /* ignore */ }
+    }
+  }, [storageKey])
+
+  const handleVote = (action: 'like' | 'dislike') => {
+    setVoteData((prev) => {
+      const newData: VoteData = { ...prev }
+      if (prev.userVote === action) {
+        // 撤销
+        if (action === 'like') newData.likeCount = Math.max(0, newData.likeCount - 1)
+        else newData.dislikeCount = Math.max(0, newData.dislikeCount - 1)
+        newData.userVote = null
+      } else if (prev.userVote) {
+        // 切换
+        if (action === 'like') {
+          newData.likeCount += 1
+          newData.dislikeCount = Math.max(0, newData.dislikeCount - 1)
+        } else {
+          newData.dislikeCount += 1
+          newData.likeCount = Math.max(0, newData.likeCount - 1)
+        }
+        newData.userVote = action
+      } else {
+        // 新增
+        if (action === 'like') newData.likeCount += 1
+        else newData.dislikeCount += 1
+        newData.userVote = action
+      }
+      localStorage.setItem(storageKey, JSON.stringify(newData))
+      return { ...newData }
+    })
+  }
+
+  return (
+    <div className="flex items-center gap-4 justify-center py-4 mb-0">
+      <span className="text-sm text-gray-600 dark:text-gray-400">这篇文章对你有帮助吗？</span>
+
+      <button
+        onClick={() => handleVote('like')}
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition ${
+          voteData.userVote === 'like'
+            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 font-medium'
+            : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}
+        title="有帮助"
+      >
+        <svg className="w-5 h-5" fill={voteData.userVote === 'like' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+        </svg>
+        点赞
+        <span className="text-xs font-medium">{voteData.likeCount}</span>
+      </button>
+
+      <button
+        onClick={() => handleVote('dislike')}
+        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg transition ${
+          voteData.userVote === 'dislike'
+            ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400 font-medium'
+            : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}
+        title="没有帮助"
+      >
+        <svg className="w-5 h-5" fill={voteData.userVote === 'dislike' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+        </svg>
+        点踩
+        <span className="text-xs font-medium">{voteData.dislikeCount}</span>
+      </button>
+    </div>
+  )
+}
+
 // 获取或创建评论者 ID
 const getOrCreateCommenterId = (): string => {
   if (typeof window === 'undefined') return ''
@@ -30,8 +119,14 @@ export default function PostVote({ slug }: PostVoteProps) {
 
   // 加载文章投票数据
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') return
     fetchPostVotes()
   }, [slug])
+
+  // 静态模式：使用 localStorage 纯前端方案
+  if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') {
+    return <PostVoteStatic slug={slug} />
+  }
 
   const fetchPostVotes = async () => {
     try {

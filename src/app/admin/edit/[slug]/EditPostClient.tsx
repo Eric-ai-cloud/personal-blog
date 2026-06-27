@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import RichEditor from '@/components/admin/RichEditor'
@@ -8,12 +8,66 @@ import FrontmatterForm, { type FrontmatterFormRef } from '@/components/admin/Fro
 import { isStaticMode } from '@/lib/static-mode'
 import StaticFallback from '@/components/admin/StaticFallback'
 
-export default function NewPostPage() {
+interface EditPostClientProps {
+  slug: string
+}
+
+export default function EditPostClient({ slug: routeSlug }: EditPostClientProps) {
   const router = useRouter()
   const formRef = useRef<FrontmatterFormRef>(null)
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [content, setContent] = useState('')
-  const [createdDate] = useState(new Date().toISOString().split('T')[0])
+  const [slug, setSlug] = useState('')
+  const [formData, setFormData] = useState<{
+    title: string
+    description: string
+    date: string
+    createdDate: string
+    publishedDate: string
+    tags: string[]
+    published: boolean
+  } | null>(null)
+
+  // 加载文章数据
+  useEffect(() => {
+    if (isStaticMode()) return
+    if (routeSlug) {
+      fetchPost(routeSlug)
+    }
+  }, [routeSlug])
+
+  const fetchPost = async (postSlug: string) => {
+    try {
+      // Next.js 路由参数可能已编码，需要解码
+      const decodedSlug = decodeURIComponent(postSlug)
+      const params = new URLSearchParams({ slug: decodedSlug })
+      const response = await fetch(`/api/posts?${params.toString()}`)
+      const data = await response.json()
+
+      if (data.post) {
+        setSlug(decodedSlug)
+        setContent(data.post.content || '')
+        setFormData({
+          title: data.post.title || '',
+          description: data.post.description || '',
+          date: data.post.date || '',
+          createdDate: data.post.createdDate || '',
+          publishedDate: data.post.publishedDate || '',
+          tags: data.post.tags || [],
+          published: data.post.published ?? true,
+        })
+      } else {
+        alert('文章不存在')
+        router.push('/admin')
+      }
+    } catch (error) {
+      console.error('加载文章失败:', error)
+      alert('加载文章失败')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // 生成 slug（保留中文字符）
   const generateSlug = (title: string) => {
@@ -24,7 +78,6 @@ export default function NewPostPage() {
   }
 
   const handleSave = async () => {
-    // 从表单组件获取最新值
     const currentValues = formRef.current?.getValues()
 
     if (!currentValues?.title || currentValues.title.trim() === '') {
@@ -34,21 +87,20 @@ export default function NewPostPage() {
 
     setSaving(true)
     try {
-      const slug = generateSlug(currentValues.title)
+      const newSlug = generateSlug(currentValues.title)
+      const finalSlug = slug || newSlug
 
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          slug,
+          slug: finalSlug,
           frontmatter: {
             ...currentValues,
-            createdDate,
-            // 如果用户没填发布日期且勾选了发布，默认用今天
-            publishedDate: currentValues.published && !currentValues.publishedDate ? new Date().toISOString().split('T')[0] : (currentValues.publishedDate || ''),
+            date: currentValues.date,
           },
           content,
-          isNew: true,
+          isNew: false,
         }),
       })
 
@@ -69,7 +121,18 @@ export default function NewPostPage() {
   }
 
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin/new" />
+    return <StaticFallback adminPath="/admin" />
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">加载中...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -78,7 +141,7 @@ export default function NewPostPage() {
       <header className="bg-white dark:bg-gray-800 shadow">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            新建文章
+            编辑文章
           </h1>
           <Link
             href="/admin"
@@ -97,18 +160,12 @@ export default function NewPostPage() {
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               文章信息
             </h2>
-            <FrontmatterForm
-              ref={formRef}
-              defaultValues={{
-                title: '',
-                description: '',
-                date: new Date().toISOString().split('T')[0],
-                createdDate,
-                publishedDate: '',
-                tags: [],
-                published: true,
-              }}
-            />
+            {formData && (
+              <FrontmatterForm
+                ref={formRef}
+                defaultValues={formData}
+              />
+            )}
           </div>
 
           {/* Editor */}

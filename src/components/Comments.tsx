@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface Comment {
@@ -16,6 +16,46 @@ interface Comment {
 
 interface CommentsProps {
   articleSlug: string
+}
+
+// ========== Giscus 评论组件（静态模式使用）==========
+function GiscusComments({ articleSlug }: { articleSlug: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!ref.current || ref.current.hasChildNodes()) return
+
+    const script = document.createElement('script')
+    script.src = 'https://giscus.app/client.js'
+    script.setAttribute('data-repo', process.env.NEXT_PUBLIC_GISCUS_REPO || 'Eric-ai-cloud/personal-blog')
+    script.setAttribute('data-repo-id', process.env.NEXT_PUBLIC_GISCUS_REPO_ID || '')
+    script.setAttribute('data-category', 'General')
+    script.setAttribute('data-category-id', process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || '')
+    script.setAttribute('data-mapping', 'specific')
+    script.setAttribute('data-term', articleSlug)
+    script.setAttribute('data-strict', '0')
+    script.setAttribute('data-reactions-enabled', '1')
+    script.setAttribute('data-emit-metadata', '0')
+    script.setAttribute('data-input-position', 'top')
+    script.setAttribute('data-theme', 'preferred_color_scheme')
+    script.setAttribute('data-lang', 'zh-CN')
+    script.setAttribute('crossorigin', 'anonymous')
+    script.async = true
+    ref.current.appendChild(script)
+  }, [articleSlug])
+
+  return (
+    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">评论</h2>
+      {/* Giscus 未配置时的占位提示 */}
+      {(!process.env.NEXT_PUBLIC_GISCUS_REPO_ID || !process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID) && (
+        <div className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 mb-4">
+          评论系统尚未配置。请在 4EVERLAND 环境变量中设置 NEXT_PUBLIC_GISCUS_REPO_ID 和 NEXT_PUBLIC_GISCUS_CATEGORY_ID。
+        </div>
+      )}
+      <div ref={ref} className="min-h-[200px]" />
+    </div>
+  )
 }
 
 // 趣味形容词前缀
@@ -86,14 +126,12 @@ export default function Comments({ articleSlug }: CommentsProps) {
     formState: { errors },
   } = useForm()
 
-  // 加载评论和自动昵称
-  useEffect(() => {
-    fetchComments()
-
-    // 自动生成或读取昵称
-    const nickname = getOrCreateNickname()
-    setCurrentNickname(nickname)
-  }, [articleSlug])
+  // 更换昵称（必须在条件返回之前调用）
+  const handleChangeNickname = useCallback(() => {
+    const newNickname = generateNickname()
+    localStorage.setItem('blog_comment_nickname', newNickname)
+    setCurrentNickname(newNickname)
+  }, [])
 
   const fetchComments = async () => {
     try {
@@ -107,12 +145,20 @@ export default function Comments({ articleSlug }: CommentsProps) {
     }
   }
 
-  // 更换昵称
-  const handleChangeNickname = useCallback(() => {
-    const newNickname = generateNickname()
-    localStorage.setItem('blog_comment_nickname', newNickname)
-    setCurrentNickname(newNickname)
-  }, [])
+  // 加载评论和自动昵称
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') return
+    fetchComments()
+
+    // 自动生成或读取昵称
+    const nickname = getOrCreateNickname()
+    setCurrentNickname(nickname)
+  }, [articleSlug])
+
+  // 静态模式：使用 Giscus
+  if (process.env.NEXT_PUBLIC_STATIC_EXPORT === 'true') {
+    return <GiscusComments articleSlug={articleSlug} />
+  }
 
   // 提交评论
   const onSubmit = async (data: any) => {

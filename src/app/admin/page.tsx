@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
 import { SearchBar } from '@/components/SearchBar'
+import { isStaticMode } from '@/lib/static-mode'
+import StaticFallback from '@/components/admin/StaticFallback'
 
 interface Post {
   slug: string
@@ -17,6 +19,7 @@ interface Post {
 }
 
 export default function AdminPage() {
+  // === hooks（必须在组件顶层无条件调用）===
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null)
@@ -24,6 +27,7 @@ export default function AdminPage() {
   const [viewCounts, setViewCounts] = useState<Record<string, number>>({})
 
   useEffect(() => {
+    if (isStaticMode()) return
     fetchPosts()
     fetchViewCounts()
   }, [])
@@ -91,6 +95,11 @@ export default function AdminPage() {
     } finally {
       setDeletingSlug(null)
     }
+  }
+
+  // 静态模式回退
+  if (isStaticMode()) {
+    return <StaticFallback adminPath="/admin" />
   }
 
   return (

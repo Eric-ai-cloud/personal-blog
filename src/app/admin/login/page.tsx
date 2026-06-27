@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { isStaticMode } from '@/lib/static-mode'
+import StaticFallback from '@/components/admin/StaticFallback'
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
@@ -38,6 +40,10 @@ export default function AdminLoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (isStaticMode()) {
+    return <StaticFallback adminPath="/admin/login" />
   }
 
   return (
