@@ -11,6 +11,13 @@ const nextConfig = {
   // 静态导出配置（仅4EVERLAND启用）
   ...(isStaticExport ? { output: 'export' } : {}),
 
+  // 构建时注入环境变量到客户端代码
+  // 确保4EVERLAND构建时 NEXT_PUBLIC_* 变量能正确内联
+  env: {
+    NEXT_PUBLIC_STATIC_EXPORT: isStaticExport ? 'true' : 'false',
+    NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL || 'https://personal-blog.vercel.app',
+  },
+
   // MDX 配置
   pageExtensions: ['ts', 'tsx', 'mdx'],
 
