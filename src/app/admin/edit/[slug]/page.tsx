@@ -7,7 +7,6 @@ import RichEditor from '@/components/admin/RichEditor'
 import FrontmatterForm, { type FrontmatterFormRef } from '@/components/admin/FrontmatterForm'
 
 export const dynamic = 'force-dynamic'
-这个配置告诉Next.js，这个页面不需要在构建时预渲染，完全由客户端在运行时处理，可以绕过generateStaticParams的要求，你的编辑后台功能完全不受影响。
 export default function EditPostPage() {
   const router = useRouter()
   const params = useParams()
