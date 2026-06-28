@@ -121,7 +121,7 @@ export default function EditPostClient({ slug: routeSlug }: EditPostClientProps)
   }
 
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin" />
+    return <StaticFallback adminPath="/admin/" />
   }
 
   if (loading) {

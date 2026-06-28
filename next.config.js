@@ -9,6 +9,10 @@ const nextConfig = {
   // Next.js 配置选项
   reactStrictMode: true,
 
+  // 启用 URL 尾部斜杠，静态导出时生成 /admin/index.html 而非 /admin.html
+  // 这样 4EVERLAND/IPFS 才能正确解析 /admin/ → admin/index.html
+  trailingSlash: true,
+
   // 静态导出配置（仅4EVERLAND启用）
   ...(isStaticExport ? { output: 'export' } : {}),
 

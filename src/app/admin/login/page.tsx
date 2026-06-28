@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
   }
 
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin/login" />
+    return <StaticFallback adminPath="/admin/login/" />
   }
 
   return (

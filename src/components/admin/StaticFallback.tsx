@@ -16,7 +16,7 @@ interface StaticFallbackProps {
  * 引导用户前往 Vercel 管理后台
  */
 export default function StaticFallback({
-  adminPath = '/admin',
+  adminPath = '/admin/',
   title = '管理后台',
   description = '当前为静态部署模式，管理功能不可用。请访问 Vercel 部署进行内容管理。',
 }: StaticFallbackProps) {

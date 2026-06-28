@@ -99,7 +99,7 @@ export default function AdminPage() {
 
   // 静态模式回退
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin" />
+    return <StaticFallback adminPath="/admin/" />
   }
 
   return (
@@ -132,7 +132,7 @@ export default function AdminPage() {
             <button
               onClick={async () => {
                 await fetch('/api/auth/logout', { method: 'POST' })
-                window.location.href = '/admin/login'
+                window.location.href = '/admin/login/'
               }}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
             >

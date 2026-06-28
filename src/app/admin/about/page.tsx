@@ -56,7 +56,7 @@ export default function EditAboutPage() {
   }
 
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin/about" />
+    return <StaticFallback adminPath="/admin/about/" />
   }
 
   if (loading) {

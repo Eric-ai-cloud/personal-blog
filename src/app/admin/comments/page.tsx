@@ -134,7 +134,7 @@ export default function AdminCommentsPage() {
   const uniqueSlugs = [...new Set(comments.map((c) => c.articleSlug))]
 
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin/comments" />
+    return <StaticFallback adminPath="/admin/comments/" />
   }
 
   return (

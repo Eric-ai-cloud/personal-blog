@@ -69,7 +69,7 @@ export default function NewPostPage() {
   }
 
   if (isStaticMode()) {
-    return <StaticFallback adminPath="/admin/new" />
+    return <StaticFallback adminPath="/admin/new/" />
   }
 
   return (

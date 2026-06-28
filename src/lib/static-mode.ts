@@ -41,7 +41,7 @@ export const isStaticMode = (): boolean => {
  * 使用构建时烘焙的 NEXT_PUBLIC_VERCEL_URL，与 next.config.js 的 DefinePlugin 保持一致
  * @param path 目标路径，如 '/admin'、'/admin/comments'
  */
-export const getVercelAdminUrl = (path: string = '/admin'): string => {
+export const getVercelAdminUrl = (path: string = '/admin/'): string => {
   if (!isStaticMode()) {
     // 在 Vercel 上直接返回相对路径（内部导航）
     return path
