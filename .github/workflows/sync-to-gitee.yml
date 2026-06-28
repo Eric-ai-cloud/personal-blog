@@ -1,21 +1,21 @@
-name: Sync to Gitee
+name: Sync to Gitee Mirror
+
+# 触发条件：main分支推送时自动同步
 on:
-  push: # 只要有代码推送到GitHub，就触发同步
-    branches:
-      - '*' # 匹配所有分支，包括你的预览分支
+  push:
+    branches: [ main ]
+
+  # 支持手动触发同步
+  workflow_dispatch:
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync GitHub to Gitee
+      - name: Sync GitHub repo to Gitee
         uses: wearerequired/git-mirror-action@v1
         with:
+          # 源地址：自动获取当前GitHub仓库地址
           source-repo: https://github.com/${{ github.repository }}.git
-          destination-repo: https://Eric-ai-cloud:08cc5d2588df419d2723265467540f66@gitee.com/Eric-ai-cloud/personal-blog.git
-      - name: Trigger Gitee Pages Deploy
-        uses: yanglbme/gitee-pages-action@main
-        with:
-          gitee-token: ${{ secrets.GITEE_TOKEN }}
-          gitee-username: ${{ secrets.GITEE_NAME }}
-          gitee-repository: ${{ secrets.GITEE_REPO }}
-          branch: ${{ github.ref_name }} # 自动同步当前推送的分支作为预览分支
+          # 目标地址：直接读取我们配置好的完整带令牌地址
+          destination-repo: ${{ secrets.GITEE_FULL_URL }}
