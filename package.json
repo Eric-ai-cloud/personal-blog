@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "clean": "node -e \"['.next','out'].forEach(d=>require('fs').rmSync(d,{recursive:true,force:true}))\"",
+    "build": "npm run clean && next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
